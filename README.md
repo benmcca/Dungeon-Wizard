@@ -1,6 +1,10 @@
 ![Alt text](sprites/CroppedDungeonWizardLogo.png?raw=true "Dungeon Wizard")
 
-My second project created with Pygame. This game includes the elements of:
+My second project created with Pygame. 
+
+Gameplay: https://www.youtube.com/watch?v=p7YIRb2BnQc
+
+This game includes the elements of:
 - key presses
 - movement 
 - boundaries
