@@ -1,6 +1,6 @@
 ![Alt text](sprites/CroppedDungeonWizardLogo.png?raw=true "Dungeon Wizard")
 
-A game created with Pygame. This game includes the elements of:
+My second project created with Pygame. This game includes the elements of:
 - key presses
 - movement 
 - boundaries
