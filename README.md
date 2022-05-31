@@ -17,18 +17,18 @@ My second project created with Pygame. This game includes the elements of:
 In order to run the game, make sure the pygame module is installed as well as having all the files in this directory installed.
 
 ## Controls:
-Cursor: Aim
+**Cursor**: Aim
 
-Click: Fireball
+**Click**: Fireball
 
-W: Upwards
+**W**: Upwards
 
-A: Left
+**A**: Left
 
-S: Downwards
+**S**: Downwards
 
-D: Right
+**D**: Right
 
-Q: Health Potion
+**Q**: Health Potion
 
-E: Mana Potion
+**E**: Mana Potion
