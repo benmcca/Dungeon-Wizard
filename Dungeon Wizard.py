@@ -10,11 +10,12 @@ def mirror(spriteArray):
     return mirrorArray
 
 # Visuals Setup
+logo = pygame.transform.scale(pygame.image.load('sprites/DungeonWizardLogo.png'), (1400, 800))
 bg = pygame.transform.scale(pygame.image.load('sprites/BGZombie.png'), (1400, 800))
 icon = pygame.image.load('sprites/icon.png')
-font = pygame.font.SysFont('Helvetica', 40, True, False)
-mediumFont = pygame.font.SysFont('Helvetica', 30, True, False)
-smallFont = pygame.font.SysFont('Helvetica', 20, True, False)
+font = pygame.font.Font('sprites/Minecraft.ttf', 40)
+mediumFont = pygame.font.Font('sprites/Minecraft.ttf', 30)
+smallFont = pygame.font.Font('sprites/Minecraft.ttf', 20)
 walkRight = [pygame.image.load('sprites/wRunR0.png'), pygame.image.load('sprites/wRunR1.png'), pygame.image.load('sprites/wRunR2.png'), pygame.image.load('sprites/wRunR3.png')]
 walkLeft = mirror(walkRight)
 fireball = pygame.transform.scale(pygame.image.load('sprites/bullet.png'), (15,15))
@@ -169,7 +170,7 @@ class projectile():
         radians = math.atan2(mousepos[1] - y, mousepos[0] - x)
         self.dx = math.cos(radians)
         self.dy = math.sin(radians)
-
+        
     def draw(self, win):
         win.blit(fireball, (self.x, self.y))
 
@@ -203,51 +204,81 @@ class coin():
             pass
         
 # Drawing
+def drawStartScreen(fade):
+    win.blit(bg, (0,0))
+    logo.set_alpha(300 - fade)
+    win.blit(logo, (0,50))
+    startText = font.render('Click to Play', 1, (255,255,255))
+    startText.set_alpha(300 - fade)
+    win.blit(startText, (577, 510))
+    
+    pygame.display.update()
+
 def redrawGameWindow():
     win.blit(bg, (0,0))
     
-    # MANA BAR
-    pygame.draw.rect(win, (0,0,0), pygame.Rect(wiz.x - 5, wiz.y + 87, 60, 7.5), 0, 2)
-    if shootTimer == 0: # FULL BLUE
-        pygame.draw.rect(win, (52, 137, 247), pygame.Rect(wiz.x - 3, wiz.y + 88, 56, 5), 0, 2)
-    pygame.draw.rect(win, (72, 72, 74), pygame.Rect(wiz.x - 3, wiz.y + 88, shootTimer*55/(wiz.shootCoolDown - wiz.manaPotion*10), 5), 0, 2) # GRAY PROGESS
-
     # HEALTH
     pygame.draw.rect(win, (150, 33, 33), pygame.Rect(58, 757, wiz.health, 30), 0, 4) # HEALTH BAR
     pygame.draw.rect(win, (143, 103, 43), pygame.Rect(58, 757, 500, 30), 3, 4) # HEALTH BORDER
     win.blit(pygame.transform.scale(heartFull, (40, 40)), (10, 750))
 
     # POTIONS
-    win.blit(font.render('Q', 1, (255, 255, 255)), (35, 575))
-    win.blit(font.render('E', 1, (255, 255, 255)), (135,575))
+    win.blit(font.render('Q', 1, (255, 255, 255)), (35, 573))
+    win.blit(font.render('E', 1, (255, 255, 255)), (135,573))
     win.blit(pygame.transform.scale(healthPotion, (225, 225)), (10, 640))
     win.blit(pygame.transform.scale(manaPotion, (225, 225)), (105, 640))
     numHealth = smallFont.render('x'+str(wiz.healthPotion), 1, (255, 255, 255))
-    win.blit(numHealth, (80, 715))
+    win.blit(numHealth, (83, 715))
     numMana = smallFont.render('x'+str(wiz.manaPotion), 1, (255, 255, 255))
-    win.blit(numMana, (175, 715))
+    win.blit(numMana, (178, 715))
     price25 = smallFont.render('25', 1, (255, 255, 255))
     win.blit(price25, (30, 620))
     price50 = smallFont.render('50', 1, (255, 255, 255))
     win.blit(price50, (125, 620))
-    win.blit(pygame.transform.scale(goldCoin, (200, 200)), (52, 622))
-    win.blit(pygame.transform.scale(goldCoin, (200, 200)), (147, 622))
+    win.blit(pygame.transform.scale(goldCoin, (200, 200)), (57, 617))
+    win.blit(pygame.transform.scale(goldCoin, (200, 200)), (152, 617))
 
     # SCORE
     text = mediumFont.render('Score: ' + str(score), 1, (255, 255, 255))
-    win.blit(text, (5, 490))
+    win.blit(text, (5, 495))
 
     # COINS
     numOfCoins = mediumFont.render('Coins: ' + str(wiz.coins), 1, (255, 255, 255))
-    win.blit(numOfCoins, (5, 525))
+    win.blit(numOfCoins, (5, 532))
     for drop in drops:
         drop.draw(win)
 
-    for bullet in bullets:
-        bullet.draw(win)
+
+    # MOVEMENT PARTICLES
+    for particle in particles:
+        particle[0][0] += particle[1][0]
+        particle[0][1] += particle[1][1]
+        particle[2] -= 0.5
+        particle[1][1] += 1
+        pygame.draw.circle(win, (51, 49, 45), particle[0], particle[2])
+        if particle[2] <= 0:
+            particles.remove(particle)
+
+    # FIREBALL PARTICLES
+    for particle in fireballParticles:
+        particle[0][0] += particle[1][0]
+        particle[0][1] += particle[1][1]
+        particle[2] -= 0.2
+        pygame.draw.circle(win, (255, 123, 0), particle[0], particle[2])
+        if particle[2] <= 0:
+            fireballParticles.remove(particle)
 
     wiz.draw(win)
 
+    # MANA BAR
+    pygame.draw.rect(win, (0,0,0), pygame.Rect(wiz.x - 5, wiz.y + 87, 60, 7.5), 0, 2)
+    if shootTimer == 0: # FULL BLUE
+        pygame.draw.rect(win, (52, 137, 247), pygame.Rect(wiz.x - 3, wiz.y + 88, 56, 5), 0, 2)
+    pygame.draw.rect(win, (72, 72, 74), pygame.Rect(wiz.x - 3, wiz.y + 88, shootTimer*55/(wiz.shootCoolDown - wiz.manaPotion*10), 5), 0, 2) # GRAY PROGESS
+    
+    for bullet in bullets:
+        bullet.draw(win)
+    
     for demon in demons:
         demon.draw(win)
     
@@ -255,7 +286,6 @@ def redrawGameWindow():
         kill.draw(win)
 
     pygame.display.update()
-
 # Main Loop
 score = 0
 wiz = player(670, 330, 48, 84) #OG width 16, height 28
@@ -265,21 +295,35 @@ demonSpawnpoints = [(242, 256), (655, 131), (1039, 139), (1065, 275), (653, 530)
 demons = []
 blood = []
 drops = []
+particles = []
+fireballParticles = []
 shootTimer = 0
 spawnCoolDown = 0
 buttonTimer = 0
 buttonDelay = 15
 difficulty = score
+play = False
 
 run = True
 while run:
+    # MAIN MENU
+    while play == False:
+        drawStartScreen(0)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(0, 300, 30):
+                    drawStartScreen(i)
+                play = True
+            if event.type == pygame.QUIT:
+                run = False
+
     clock.tick(50)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
     # SPAWNING MOBS
-    mobType = random.randint(0,4)
+    mobType = random.randint(0,6)
     if difficulty < 80:
         difficulty = score
     if spawnCoolDown == 100 - difficulty:
@@ -300,6 +344,8 @@ while run:
         spawnCoolDown = 0
  
     for bullet in bullets: # CHECK IF BULLETS HIT DEMON OR OFF SCREEN
+        fireballParticles.append([[bullet.x + 7.5,bullet.y + 7.5], [random.randint(0,20) / 5 - 2, 0], random.randint(2,4)])
+
         for demon in demons:
             try:
                 if bullet.y - 7.5 < demon.hitbox[1] + demon.hitbox[3] and bullet.y + 7.5 > demon.hitbox[1]:
@@ -350,12 +396,14 @@ while run:
         shootTimer = 0
     if mouse[0] and shootTimer == 0: # SHOOT
         fireballSound.play()
-        bullets.append(projectile(round(wiz.x + wiz.width//2 - 15), round(wiz.y + wiz.width//2 + 40), pygame.mouse.get_pos(), 6))
+        fireBallObject = projectile(round(wiz.x + wiz.width//2 - 15), round(wiz.y + wiz.width//2 + 40), pygame.mouse.get_pos(), 6)
+        bullets.append(fireBallObject)
         shootTimer = 1
 
     if keys[pygame.K_w] and wiz.y > 110: # UP
         wiz.y -= wiz.vel*1
         wiz.standing = False
+
         if keys[pygame.K_a] and wiz.x > 250: # UPLEFT 
             wiz.x -= wiz.vel
             wiz.left= True
@@ -389,6 +437,14 @@ while run:
         wiz.standing = True
         walkCount = 0
 
+    # ADD PARTICLES IF MOVING
+    if wiz.standing == False:
+        if wiz.left == True:
+            particles.append([[wiz.x + 40,wiz.y + 85], [random.randint(0,2), random.randint(-5,-3)], random.randint(5,5)])
+        elif wiz.right == True:
+            particles.append([[wiz.x + 10,wiz.y + 85], [random.randint(-2,0), random.randint(-5,-3)], random.randint(5,5)])
+
+    # BUYING HEALTH
     if buttonTimer > 0:
         buttonTimer += 1
     if buttonTimer > buttonDelay:
@@ -397,32 +453,51 @@ while run:
         buttonTimer = 1
         drinkSound.play()
         if wiz.health + 50 <= 500:
-            wiz.health += 50
+            wiz.health += 100
         else:
             wiz.health = 500
         wiz.healthPotion += 1
         wiz.coins -= 25
+    # BUYING MANA
     if keys[pygame.K_e] and wiz.coins >= 50 and wiz.manaPotion < 4 and buttonTimer == 0: # BUY MANA
         drinkSound.play()
         buttonTimer = 1
         wiz.manaPotion += 1
         wiz.coins -= 50
 
-    if wiz.health > 0:
-        redrawGameWindow()
-
-    else:
-        pygame.draw.rect(win, (45, 45, 45), pygame.Rect(530, 250, 345, 200), 0, 4) # HEALTH BAR
-        gameOver = font.render('GAME OVER', 1, (255, 77, 46))
+    # GAME OVER
+    if wiz.health <= 0:
+        pygame.draw.rect(win, (30, 30, 30), pygame.Rect(530, 250, 345, 200), 0, 8)
+        gameOver = mediumFont.render('GAME OVER', 1, (255, 77, 46))
         scoreText = font.render(str(score), 1, (255, 255, 255))
+        playAgain = smallFont.render('Press Space to Play Again', 1, (176, 172, 169))
+        win.blit(gameOver, (610, 280))
+        win.blit(playAgain, (577, 410))
 
         if score < 10:
-            win.blit(scoreText, (695, 350))
+            win.blit(scoreText, (695, 335))
         elif score < 100:
-            win.blit(scoreText, (685, 350))
+            win.blit(scoreText, (685, 335))
         else:
-            win.blit(scoreText, (675, 350))
-        win.blit(gameOver, (600, 300))
+            win.blit(scoreText, (675, 335))
         pygame.display.update()
 
+        if keys[pygame.K_SPACE]:
+            score = 0
+            wiz.x = 670
+            wiz.y = 330
+            wiz.health = 250
+            wiz.coins = 0
+            wiz.healthPotion = 0
+            wiz.manaPotion = 0
+            demons = []
+            drops = []
+            shootTimer = 0
+            spawnCoolDown = 0
+            difficulty = score
+            redrawGameWindow()
+
+    else:
+        redrawGameWindow()
+        
 pygame.quit()
