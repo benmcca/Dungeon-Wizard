@@ -11,6 +11,7 @@ def mirror(spriteArray):
 
 # Visuals Setup
 logo = pygame.transform.scale(pygame.image.load('sprites/DungeonWizardLogo.png'), (1400, 800))
+startScreen = pygame.transform.scale(pygame.image.load('sprites/startScreen.png'), (1400, 800))
 bg = pygame.transform.scale(pygame.image.load('sprites/BGZombie.png'), (1400, 800))
 icon = pygame.image.load('sprites/icon.png')
 font = pygame.font.Font('sprites/Minecraft.ttf', 40)
@@ -205,14 +206,22 @@ class coin():
         
 # Drawing
 def drawStartScreen(fade):
-    win.blit(bg, (0,0))
+    # startScreen.set_alpha(300 - fade)
+    win.blit(startScreen, (0,0))
     logo.set_alpha(300 - fade)
     win.blit(logo, (0,50))
     startText = font.render('Click to Play', 1, (255,255,255))
     startText.set_alpha(300 - fade)
     win.blit(startText, (577, 510))
+    demon1 = pygame.transform.rotate(demonRight[1], 20)
+    win.blit(pygame.transform.scale(demon1, (600, 600)), (-150, 400))
+    chort1 = pygame.transform.rotate(chortRight[1], 10)
+    win.blit(pygame.transform.scale(chort1, (300, 300)), (300, 520))
+    wiz1 = pygame.transform.rotate(walkRight[0], 0)
+    win.blit(pygame.transform.scale(wiz1, (300, 300)), (1000, 490))
     
     pygame.display.update()
+
 
 def redrawGameWindow():
     win.blit(bg, (0,0))
@@ -303,6 +312,7 @@ buttonTimer = 0
 buttonDelay = 15
 difficulty = score
 play = False
+pause = False
 
 run = True
 while run:
