@@ -14,7 +14,7 @@ A game created with Pygame. This game includes the elements of:
 
 In order to run the game, make sure the pygame module is installed as well as having all the files in this directory installed.
 
-### Controls:
+## Controls:
 Cursor: Aim
 
 Click: Fireball
