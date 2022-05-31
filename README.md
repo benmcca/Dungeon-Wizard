@@ -1,4 +1,4 @@
-# Dungeon Wizard
+![Alt text](sprites/DungeonWizardLogo.png?raw=true "Dungeon Wizard")
 
 A game created with Pygame. This game includes the elements of:
 - key presses
